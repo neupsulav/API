@@ -4,6 +4,7 @@ const noRoute = require("./middleware/noRoute");
 require("dotenv").config();
 const User = require("./models/model");
 const connection = require("./db/connection");
+app.use(express.json());
 
 // port
 const port = process.env.PORT;
@@ -14,7 +15,6 @@ app.use("/api", route);
 
 // middlewares
 app.use(noRoute);
-app.use(express.json());
 
 // listening to server
 const listen = async () => {

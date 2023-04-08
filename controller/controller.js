@@ -2,24 +2,25 @@ const User = require("../models/model");
 
 const getData = async (req, res) => {
   try {
-    res.status(200).send("Data outgoing");
+    res.status(200).send("API is currently working");
   } catch (error) {
     res.status(400).send(error);
   }
 };
 
+// user registration
 const registerUser = async (req, res) => {
-  const { name, email, phone, work, password, cpassword } = req.body;
-
-  if (!name || !email || !phone || !work || !password || !cpassword) {
-    return res.status(422).send("Please fill all the fields properly");
-  }
-
-  if (password != cpassword) {
-    return res.status(422).send("Passwords doesn't match");
-  }
-
   try {
+    const { name, email, phone, work, password, cpassword } = req.body;
+
+    if (!name || !email || !phone || !work || !password || !cpassword) {
+      return res.status(400).send("Please fill all the fields properly");
+    }
+
+    if (password != cpassword) {
+      return res.status(422).send("Passwords doesn't match");
+    }
+
     const ifEmailExist = await User.findOne({ email: email });
 
     if (ifEmailExist) {
@@ -34,6 +35,7 @@ const registerUser = async (req, res) => {
       password: password,
       cpassword: cpassword,
     });
+
     const saveUser = await newUser.save();
 
     if (saveUser) {
@@ -44,4 +46,25 @@ const registerUser = async (req, res) => {
   }
 };
 
-module.exports = { getData, registerUser };
+//user login
+const signin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).send("Please fill all the fields properly");
+    }
+
+    const loginUser = await User.findOne({ email: email });
+
+    if (loginUser) {
+      res.status(200).send("User login successfully");
+    } else {
+      res.status(404).send("Invalid user credentials");
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+module.exports = { getData, registerUser, signin };

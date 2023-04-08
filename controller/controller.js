@@ -1,4 +1,5 @@
 const User = require("../models/model");
+const bcryptjs = require("bcryptjs");
 
 const getData = async (req, res) => {
   try {
@@ -58,7 +59,13 @@ const signin = async (req, res) => {
     const loginUser = await User.findOne({ email: email });
 
     if (loginUser) {
-      res.status(200).send("User login successfully");
+      const isMatch = await bcryptjs.compare(password, loginUser.password);
+
+      if (isMatch) {
+        res.status(200).send("User logged in successfully");
+      } else {
+        res.status(400).send("Invalid user credentials");
+      }
     } else {
       res.status(404).send("Invalid user credentials");
     }

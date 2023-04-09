@@ -65,6 +65,11 @@ const signin = async (req, res) => {
       // json web token
       const token = await loginUser.generateAuthToken();
 
+      res.cookie("JWToken", token, {
+        expires: new Date(Date.now() + 26298000000),
+        httpOnly: true,
+      });
+
       if (isMatch) {
         res.status(200).send("User logged in successfully");
       } else {
